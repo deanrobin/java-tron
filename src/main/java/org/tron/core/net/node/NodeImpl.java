@@ -1,31 +1,9 @@
 package org.tron.core.net.node;
 
-import static org.tron.core.config.Parameter.NodeConstant.MAX_BLOCKS_ALREADY_FETCHED;
-import static org.tron.core.config.Parameter.NodeConstant.MAX_BLOCKS_IN_PROCESS;
-import static org.tron.core.config.Parameter.NodeConstant.MAX_BLOCKS_SYNC_FROM_ONE_PEER;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import io.netty.util.internal.ConcurrentSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,25 +21,17 @@ import org.tron.core.capsule.BlockCapsule.BlockId;
 import org.tron.core.config.Parameter.ChainConstant;
 import org.tron.core.config.Parameter.NetConstants;
 import org.tron.core.config.Parameter.NodeConstant;
-import org.tron.core.exception.BadBlockException;
-import org.tron.core.exception.BadTransactionException;
-import org.tron.core.exception.StoreException;
-import org.tron.core.exception.TraitorPeerException;
-import org.tron.core.exception.TronException;
-import org.tron.core.exception.UnLinkedBlockException;
-import org.tron.core.net.message.BlockInventoryMessage;
-import org.tron.core.net.message.BlockMessage;
-import org.tron.core.net.message.ChainInventoryMessage;
-import org.tron.core.net.message.FetchInvDataMessage;
-import org.tron.core.net.message.InventoryMessage;
-import org.tron.core.net.message.ItemNotFound;
-import org.tron.core.net.message.MessageTypes;
-import org.tron.core.net.message.SyncBlockChainMessage;
-import org.tron.core.net.message.TransactionMessage;
-import org.tron.core.net.message.TronMessage;
+import org.tron.core.exception.*;
+import org.tron.core.net.message.*;
 import org.tron.core.net.peer.PeerConnection;
 import org.tron.core.net.peer.PeerConnectionDelegate;
 import org.tron.protos.Protocol.Inventory.InventoryType;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.*;
+
+import static org.tron.core.config.Parameter.NodeConstant.*;
 
 @Slf4j
 @Component
@@ -216,6 +186,8 @@ public class NodeImpl extends PeerConnectionDelegate implements Node {
         onHandleBlockInventoryMessage(peer, (BlockInventoryMessage) msg);
         break;
       case BLOCK_CHAIN_INVENTORY:
+
+
         onHandleChainInventoryMessage(peer, (ChainInventoryMessage) msg);
         break;
       case INVENTORY:
